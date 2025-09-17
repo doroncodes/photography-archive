@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Photography Showcase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: #000000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(3rem, 12vw, 6rem);
+            font-weight: 100;
+            letter-spacing: 8px;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease forwards;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.4) 50%, #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
+            position: relative;
+        }
+
+        .hero-content h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #ffffff, transparent);
+            opacity: 0.6;
+        }
+
+        .hero-content p {
+            font-size: 1.1rem;
+            opacity: 0.6;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease 0.3s forwards;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .floating-shape {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffffff;
+            border-radius: 50%;
+            opacity: 0.2;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .floating-shape:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .floating-shape:nth-child(2) { top: 60%; right: 15%; animation-delay: 2s; width: 6px; height: 6px; }
+        .floating-shape:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            animation: fadeInUp 1.5s ease 0.6s forwards;
+        }
+
+        .scroll-indicator::after {
+            content: '';
+            display: block;
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(to bottom, transparent, #ffffff, transparent);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .winners-section {
+            padding: 5rem 2rem;
+            background: #000000;
+            text-align: center;
+            position: relative;
+        }
+
+        .winners-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        .winners-title {
+            font-size: 2.5rem;
+            font-weight: 200;
+            margin-bottom: 1rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #ffffff;
+        }
+
+        .winners-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 4rem;
+            opacity: 0.8;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .podium {
+            display: flex;
+            justify-content: center;
+            align-items: end;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .podium-place {
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .podium-place:hover {
+            transform: scale(1.05);
+        }
+
+        .podium-base {
+            background: #000000;
+            border-radius: 2px 2px 0 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1.5rem 1rem;
+            position: relative;
+            border: 1px solid #ffffff;
+        }
+
+        .first-place .podium-base {
+            height: 200px;
+            background: #ffffff;
+            color: #000000;
+        }
+
+        .second-place .podium-base {
+            height: 160px;
+        }
+
+        .third-place .podium-base {
+            height: 120px;
+        }
+
+        .place-number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .winner-name {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .winner-category {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .crown {
+            position: absolute;
+            top: -20px;
+            font-size: 2rem;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #ffffff; }
+            to { text-shadow: 0 0 20px #ffffff, 0 0 30px #ffffff; }
+        }
+
+        .quotes-section {
+            padding: 5rem 2rem;
+            background: #000000;
+        }
+
+        .quotes-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 200;
+            margin-bottom: 3rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .quotes-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .quote-card {
+            background: #000000;
+            padding: 3rem;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .quote-card:hover {
+            background: #ffffff;
+            color: #000000;
+            transform: translateY(-5px);
+        }
+
+        .quote-text {
+            font-size: 1.1rem;
+            font-style: italic;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            transition: color 0.3s ease;
+        }
+
+        .quote-card:hover .quote-text {
+            color: rgba(0, 0, 0, 0.9);
+        }
+
+        .quote-author {
+            text-align: right;
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .quote-card:hover .quote-author {
+            color: #000000;
+        }
+
+        .quote-marks {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            width: 24px;
+            height: 24px;
+            opacity: 0.3;
+        }
+
+        .quote-marks::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-left: 2px solid #ffffff;
+            border-top: 2px solid #ffffff;
+            border-radius: 2px 0 0 0;
+        }
+
+        .quote-marks::after {
+            content: '';
+            position: absolute;
+            left: 12px;
+            width: 8px;
+            height: 8px;
+            border-left: 2px solid #ffffff;
+            border-top: 2px solid #ffffff;
+            border-radius: 2px 0 0 0;
+        }
+
+        .quote-card:hover .quote-marks::before,
+        .quote-card:hover .quote-marks::after {
+            border-color: #000000;
+        }
+
+        .gallery-section {
+            padding: 5rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 200;
+            margin-bottom: 1rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            opacity: 0.7;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .photographers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+            gap: 4rem;
+            margin-top: 5rem;
+        }
+
+        .photographer-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .photographer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .photographer-card:hover::before {
+            left: 100%;
+        }
+
+        .photographer-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(255, 255, 255, 0.1);
+            background: #ffffff;
+            color: #000000;
+        }
+
+        .photographer-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 4px;
+            background: #000000;
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #ffffff;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .photographer-card:hover .photographer-avatar {
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        .photographer-name {
+            font-size: 1.5rem;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .photographer-card:hover .photographer-name {
+            color: #000000;
+        }
+
+        .photographer-specialty {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-style: normal;
+            font-size: 0.85rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            transition: color 0.3s ease;
+        }
+
+        .photographer-card:hover .photographer-specialty {
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        .photographer-description {
+            text-align: center;
+            line-height: 1.8;
+            margin-bottom: 3rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95rem;
+            font-weight: 300;
+            transition: color 0.3s ease;
+        }
+
+        .photographer-card:hover .photographer-description {
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        .view-portfolio-btn {
+            display: block;
+            width: 100%;
+            padding: 1.2rem 2rem;
+            background: #000000;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 2px;
+            text-align: center;
+            font-weight: 500;
+            letter-spacing: 2px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #ffffff;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .view-portfolio-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .view-portfolio-btn:hover::before {
+            left: 100%;
+        }
+
+        .view-portfolio-btn:hover {
+            background: #ffffff;
+            color: #000000;
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
+        }
+
+        .photographer-card:hover .view-portfolio-btn {
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        .photographer-card:hover .view-portfolio-btn:hover {
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+
+
+        .stats-section {
+            background: #000000;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            padding: 1.5rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .podium {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .podium-place {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .photographers-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .photographer-card {
+                padding: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .winners-title {
+                font-size: 2rem;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            margin-top: 4rem;
+        }
+
+        .footer p {
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="floating-elements">
+            <div class="floating-shape"></div>
+            <div class="floating-shape"></div>
+            <div class="floating-shape"></div>
+        </div>
+        <div class="hero-content">
+            <h1>Visual Stories</h1>
+            <p>Celebrating the extraordinary talent of our school's photographers</p>
+        </div>
+        <div class="scroll-indicator"></div>
+    </section>
+
+    <section class="winners-section">
+        <h2 class="winners-title">Competition Winners</h2>
+        <p class="winners-subtitle">
+            Congratulations to our winners and all the 13 talented photographers who participated. 
+            Your creativity, dedication, and unique perspectives have truly amazed us all.
+        </p>
+        
+        <div class="podium">
+            <div class="podium-place first-place">
+                <div class="crown">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 16L3 7L8.5 10L12 4L15.5 10L21 7L19 16H5Z" stroke="#000000" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M5 16H19V18C19 19.1046 18.1046 20 17 20H7C5.89543 20 5 19.1046 5 18V16Z" fill="#000000"/>
+                    </svg>
+                </div>
+                <div class="podium-base">
+                    <div class="place-number">1</div>
+                    <div class="winner-name">Dov Drishner</div>
+                    <div class="winner-category">Overall Champion</div>
+                </div>
+            </div>
+            
+            <div class="podium-place second-place">
+                <div class="podium-base">
+                    <div class="place-number">2</div>
+                    <div class="winner-name">Yehuda Rabin</div>
+                    <div class="winner-category">Wildlife Excellence</div>
+                </div>
+            </div>
+            
+            <div class="podium-place third-place">
+                <div class="podium-base">
+                    <div class="place-number">3</div>
+                    <div class="winner-name">Dovi Bricker</div>
+                    <div class="winner-category">Skill and Motion Excellence</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number" data-target="13">0</div>
+                <div class="stat-label">Participants</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="200">0</div>
+                <div class="stat-label">Photos Submitted</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="5">0</div>
+                <div class="stat-label">Categories</div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="quotes-section">
+        <h2 class="quotes-title">Words of Inspiration</h2>
+        <div class="quotes-container">
+            <div class="quote-card">
+                <div class="quote-marks"></div>
+                <p class="quote-text">Photography is the story I fail to put into words.</p>
+                <p class="quote-author">— Destin Sparks</p>
+            </div>
+            <div class="quote-card">
+                <div class="quote-marks"></div>
+                <p class="quote-text">In photography there is a reality so subtle that it becomes more real than reality.</p>
+                <p class="quote-author">— Alfred Stieglitz</p>
+            </div>
+            <div class="quote-card">
+                <div class="quote-marks"></div>
+                <p class="quote-text">The best thing about a picture is that it never changes, even when the people in it do.</p>
+                <p class="quote-author">— Andy Warhol</p>
+            </div>
+            <div class="quote-card">
+                <div class="quote-marks"></div>
+                <p class="quote-text">Photography takes an instant out of time, altering life by holding it still.</p>
+                <p class="quote-author">— Dorothea Lange</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="gallery-section">
+        <h2 class="section-title">Featured Photographers</h2>
+        <p class="section-subtitle">Discover the diverse talents and unique perspectives of our incredible photography community</p>
+        
+        <div class="photographers-grid">
+            <div class="photographer-card">
+                <div class="photographer-avatar">DD</div>
+                <h3 class="photographer-name">Dov Drishner</h3>
+                <p class="photographer-specialty">Wildlife Photography</p>
+                <p class="photographer-description">Capturing the raw beauty and behavior of wildlife in their natural habitats with patience and skill.</p>
+                <a href="https://drive.google.com/drive/folders/1ursluuk15xrWVUWEBEONww8IS8O32C5E?usp=sharing" target="_blank" class="view-portfolio-btn">View Portfolio</a>
+            </div>
+
+            <div class="photographer-card">
+                <div class="photographer-avatar">YR</div>
+                <h3 class="photographer-name">Yehuda Rabin</h3>
+                <p class="photographer-specialty">Wildlife Photography</p>
+                <p class="photographer-description">Capturing the raw beauty and behavior of wildlife in their natural habitats with patience and skill.</p>
+                <a href="https://drive.google.com/drive/folders/1k6bLAYHJjG6gMoMQwJco-sHTlkNmlr-J?usp=sharing" target="_blank" class="view-portfolio-btn">View Portfolio</a>
+            </div>
+
+            <div class="photographer-card">
+                <div class="photographer-avatar">DB</div>
+                <h3 class="photographer-name">Dovi Bricker</h3>
+                <p class="photographer-specialty">Nature & Motion</p>
+                <p class="photographer-description">Capturing the dynamic beauty of nature in motion with precision timing and artistic composition.</p>
+                <a href="https://drive.google.com/drive/folders/1cnzp9Qt10rnaPD_RodTeZv-7yyt1TL35?usp=sharing" target="_blank" class="view-portfolio-btn">View Portfolio</a>
+            </div>
+
+            <div class="photographer-card">
+                <div class="photographer-avatar">RZ</div>
+                <h3 class="photographer-name">Rabbi Zaiden</h3>
+                <p class="photographer-specialty">Wildlife Photography</p>
+                <p class="photographer-description">Capturing the raw beauty and behavior of wildlife in their natural habitats with patience and skill.</p>
+                <a href="https://drive.google.com/drive/folders/16pasVfJek2V61gGZJaTkIuMNWDg9ztkW?usp=sharing" target="_blank" class="view-portfolio-btn">View Portfolio</a>
+            </div>
+
+            <div class="photographer-card">
+                <div class="photographer-avatar">UM</div>
+                <h3 class="photographer-name">Uri Miller</h3>
+                <p class="photographer-specialty">Wildlife Photography</p>
+                <p class="photographer-description">Capturing the raw beauty and behavior of wildlife in their natural habitats with patience and skill.</p>
+                <a href="https://drive.google.com/drive/folders/1Xn8pWGzo4q9lh3C5LH8Yp8SFBcbMrHqo?usp=sharing" target="_blank" class="view-portfolio-btn">View Portfolio</a>
+            </div>
+
+            <div class="photographer-card">
+                <div class="photographer-avatar">NS</div>
+                <h3 class="photographer-name">Natti Salkinder</h3>
+                <p class="photographer-specialty">Industrial & Street</p>
+                <p class="photographer-description">Documenting urban life and industrial landscapes with a keen eye for architectural details and street scenes.</p>
+                <a href="https://drive.google.com/drive/folders/1vWaPfWqLGdMbzmuki14lr5scVsgeekEY?usp=sharing" target="_blank" class="view-portfolio-btn">View Portfolio</a>
+            </div>
+
+            <div class="photographer-card">
+                <div class="photographer-avatar">JF</div>
+                <h3 class="photographer-name">Jacob Froom</h3>
+                <p class="photographer-specialty">Nature & Monuments</p>
+                <p class="photographer-description">Capturing the grandeur of natural landscapes and historic monuments with artistic vision and technical precision.</p>
+                <a href="https://drive.google.com/drive/folders/1eI1p2FnaayryROzYXCHUjgoemiBvaR-1?usp=sharing" target="_blank" class="view-portfolio-btn">View Portfolio</a>
+            </div>
+
+            <div class="photographer-card">
+                <div class="photographer-avatar">NR</div>
+                <h3 class="photographer-name">Nachman Rogoff</h3>
+                <p class="photographer-specialty">Landscape & Nature</p>
+                <p class="photographer-description">Exploring the beauty of natural landscapes through stunning compositions and masterful use of light.</p>
+                <a href="https://drive.google.com/drive/folders/1IvUzSIOdweUrvJUL6S8V-lbGq6j-1CVA?usp=sharing" target="_blank" class="view-portfolio-btn">View Portfolio</a>
+            </div>
+
+            <div class="photographer-card">
+                <div class="photographer-avatar">AG</div>
+                <h3 class="photographer-name">Ari Goldstein</h3>
+                <p class="photographer-specialty">Wildlife Photography</p>
+                <p class="photographer-description">Capturing the raw beauty and behavior of wildlife in their natural habitats with patience and skill.</p>
+                <a href="https://drive.google.com/drive/folders/1O9uWuQZMjgWnOxm4KZYdm_x5J13BwQtr?usp=sharing" target="_blank" class="view-portfolio-btn">View Portfolio</a>
+            </div>
+
+            <div class="photographer-card">
+                <div class="photographer-avatar">DG</div>
+                <h3 class="photographer-name">David Greenstein</h3>
+                <p class="photographer-specialty">Wildlife Photography</p>
+                <p class="photographer-description">Capturing the raw beauty and behavior of wildlife in their natural habitats with patience and skill.</p>
+                <a href="https://drive.google.com/drive/folders/1G4Yd4mZT-farFaJqb0a-yec_Z9xWYfN1?usp=sharing" target="_blank" class="view-portfolio-btn">View Portfolio</a>
+            </div>
+
+            <div class="photographer-card">
+                <div class="photographer-avatar">AG</div>
+                <h3 class="photographer-name">Ariel Greenberg</h3>
+                <p class="photographer-specialty">Nature Photography</p>
+                <p class="photographer-description">Exploring the intricate beauty of the natural world through detailed compositions and artistic vision.</p>
+                <a href="https://drive.google.com/drive/folders/1H-TbxHSeASUgdwLEG2VNMVmYtNIj0mAl?usp=sharing" target="_blank" class="view-portfolio-btn">View Portfolio</a>
+            </div>
+
+            <div class="photographer-card">
+                <div class="photographer-avatar">YS</div>
+                <h3 class="photographer-name">Yona Spitz</h3>
+                <p class="photographer-specialty">Evocative & Cultural</p>
+                <p class="photographer-description">Creating powerful, evocative images that capture cultural moments and human stories with emotional depth.</p>
+                <a href="https://drive.google.com/drive/folders/1Ai_pOEbopdySjPivacy4p3taw9IIVyKQ?usp=sharing" target="_blank" class="view-portfolio-btn">View Portfolio</a>
+            </div>
+
+            <div class="photographer-card">
+                <div class="photographer-avatar">LL</div>
+                <h3 class="photographer-name">Lior Levy</h3>
+                <p class="photographer-specialty">Industrial & Street</p>
+                <p class="photographer-description">Finding beauty in everyday industrial scenes and street photography, capturing the extraordinary in the mundane.</p>
+                <a href="https://drive.google.com/drive/folders/1PPlIpLW8APIa6CaZknzeh-XeBOtCP9aP?usp=sharing" target="_blank" class="view-portfolio-btn">View Portfolio</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>"Every picture tells a story, and every photographer has a unique voice."</p>
+    </footer>
+
+    <script>
+
+
+        // Add smooth scrolling and premium interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            const scrollIndicator = document.querySelector('.scroll-indicator');
+            scrollIndicator.addEventListener('click', function() {
+                document.querySelector('.winners-section').scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+
+            // Add magnetic effect to buttons
+            const buttons = document.querySelectorAll('.view-portfolio-btn');
+            buttons.forEach(button => {
+                button.addEventListener('mousemove', (e) => {
+                    const rect = button.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    
+                    button.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px) scale(1.05)`;
+                });
+                
+                button.addEventListener('mouseleave', () => {
+                    button.style.transform = 'translate(0px, 0px) scale(1)';
+                });
+            });
+
+            // Add parallax effect to hero
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const hero = document.querySelector('.hero-content');
+                const floatingShapes = document.querySelectorAll('.floating-shape');
+                
+                if (hero) {
+                    hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+                }
+                
+                floatingShapes.forEach((shape, index) => {
+                    shape.style.transform = `translateY(${scrolled * (0.2 + index * 0.1)}px)`;
+                });
+            });
+        });
+
+        // Add intersection observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe photographer cards for staggered animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.photographer-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+                observer.observe(card);
+            });
+
+            // Animate quote cards
+            const quoteCards = document.querySelectorAll('.quote-card');
+            quoteCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = `opacity 0.6s ease ${index * 0.2}s, transform 0.6s ease ${index * 0.2}s`;
+                observer.observe(card);
+            });
+
+            // Animate stats
+            const statItems = document.querySelectorAll('.stat-item');
+            statItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'scale(0.8)';
+                item.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+                observer.observe(item);
+            });
+        });
+
+        // Add number counting animation for stats
+        function animateNumbers() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                const target = parseInt(stat.getAttribute('data-target'));
+                let current = 0;
+                const increment = target / 60;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        if (target === 200) {
+                            stat.textContent = '200+';
+                        } else if (target === 5) {
+                            stat.textContent = '5+';
+                        } else {
+                            stat.textContent = target;
+                        }
+                        clearInterval(timer);
+                    } else {
+                        stat.textContent = Math.floor(current);
+                    }
+                }, 25);
+            });
+        }
+
+        // Trigger number animation when stats section is visible
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateNumbers();
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const statsSection = document.querySelector('.stats-section');
+            if (statsSection) {
+                statsObserver.observe(statsSection);
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'980ac80d55bf9863',t:'MTc1ODEzNDk0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
